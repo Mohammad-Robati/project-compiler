@@ -8,11 +8,11 @@ class Parser:
     def __init__(self):
         pass
 
-    def p_empty(self, p):
-        r'''empty :'''
-
     def p_program(self, p):
         r'''program  : macros classes '''
+
+    def p_empty(self, p):
+        r'''empty :'''
 
     def p_macros(self, p):
         r'''macros  : macros macro
@@ -102,7 +102,7 @@ class Parser:
         | continue'''
 
     def p_assignment(self, p):
-        r'''assignment  : lvalue EQ exp SEMICOLON '''
+        r'''assignment  : lvalue ASSIGNMENT exp SEMICOLON '''
 
     def p_lvalue(self, p):
         r'''lvalue  : ID
@@ -210,6 +210,18 @@ class Parser:
 
     def p_error(self, p):
         print("Syntax error in input!")
+
+    precedence = (
+        ('left', 'AND', 'OR'),
+        ('left', 'NOT'),
+        ('left', 'LT', 'LE', 'GT', 'GE', 'EQ', 'NE'),
+        ('left', 'ADDITION', 'SUBTRACTION'),
+        ('left', 'MULTIPLICATION', 'DIVISION'),
+        ('left', 'MODULO'),
+        ('left', 'POWER'),
+        ('left', 'SHIFT_LEFT', 'SHIFT_RIGHT'),
+        ('left', 'BITWISE_AND', 'BITWISE_OR', 'BITWISE_NOT')
+    )
 
     def build(self, **kwargs):
         r'''build the parser'''
