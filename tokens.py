@@ -1,5 +1,4 @@
 tokens = (
-    'ERROR',
     'ID',
     'INTEGER',
     'REAL',
@@ -54,4 +53,5 @@ tokens = (
     'DOT',
     'SEMICOLON',
     'COMMA',
+    'ERROR'
 )
