@@ -1,11 +1,24 @@
 
 #include <stdio.h>
-// Functions not yet 
-void main()
+#include <stdlib.h>
+
+int main()
 {
 
+double * top = (double*) malloc(1000 * sizeof(double));
+void ** labelsTop = (void**) malloc(1000 * sizeof(void*));
+top += 1000;
+labelsTop += 1000;
 double t0 ,t1 ,t2 ,t3 ,t4 ,t5 ,t6 ,t7;
 
+goto _main;
+
+_main:; //function decleration
+
+// pop arguments
+
+
+ // function body:
 double sum;
 double something;
 double length1;
@@ -56,8 +69,10 @@ t6 = length1 * length2;
 t7 = sum / t6;
 something = t7;
 
-printf("%lf\n", length1);
-printf("%lf\n", length2);
-printf("%lf\n", sum);
-printf("%lf\n", something);
+// return from function
+goto end;
+
+
+
+end : return 0;
 }

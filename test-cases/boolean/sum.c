@@ -1,11 +1,24 @@
 
 #include <stdio.h>
-// Functions not yet 
-void main()
+#include <stdlib.h>
+
+int main()
 {
 
+double * top = (double*) malloc(1000 * sizeof(double));
+void ** labelsTop = (void**) malloc(1000 * sizeof(void*));
+top += 1000;
+labelsTop += 1000;
 double t0 ,t1 ,t2 ,t3;
 
+goto _main;
+
+_main:; //function decleration
+
+// pop arguments
+
+
+ // function body:
 int number_;
 int ro_ot;
 int sumOdds;
@@ -38,7 +51,12 @@ goto L2; //back to while begin
 
 L4: // end of while
 
-NOT YET FUNCTION CALL;
+printf("%d", sumOdds);
+
+// return from function
+goto end;
 
 
+
+end : return 0;
 }

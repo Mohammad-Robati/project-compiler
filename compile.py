@@ -4,8 +4,8 @@ from parser import Parser
 if __name__ == "__main__":
     lexer = Lexer().build()
     # with open("test-cases/test1.txt", "r") as f:
-    with open("test-cases/boolean/vectors.txt", "r") as f:
-        with open("test-cases/boolean/vectors.c", "w") as fo:
+    with open("test-cases/function/negation.txt", "r") as f:
+        with open("test-cases/boolean/negation.c", "w") as fo:
             text_input = f.read()
 
             lexer = Lexer().build()

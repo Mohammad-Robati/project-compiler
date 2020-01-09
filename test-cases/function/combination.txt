@@ -7,8 +7,8 @@ class Program{
 		r = 2;
 		
 		comb_ = combination(n, r);
-		print("{comb_}");
-		print("{n}");
+		//print("{comb_}");
+		//print("{n}");
 	}
 	
 	static int combination(int n, int r){

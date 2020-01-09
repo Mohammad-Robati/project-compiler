@@ -18,14 +18,22 @@ class Parser:
         p[0] = NoneTerminal(p)
         head = '''
 #include <stdio.h>
-'''
+#include <stdlib.h>
 
-        p[0].code = head + p[2].code
+'''     
+        registers = ""
+        if len(Register.Registers) > 0:
+            registers = "double " + " ,".join((reg.place for reg in Register.Registers)) + ";\n"
+        
+        stacks = "void* returnAddress;\ndouble * top = (double*) malloc(1000 * sizeof(double));\nvoid ** labelsTop = (void**) malloc(1000 * sizeof(void*));\ntop += 1000;\nlabelsTop += 1000;"
+
+        jump_to_main = "goto _main;\n\n"
+        p[0].code = head + "int main()\n{\n\n" + stacks + "\n" + registers + "\n" + jump_to_main +  p[2].code + "\n\nend : return 0;\n}"
+
         self.fileo.write(p[0].code)
 
     def p_empty(self, p):
         r'''empty :  %prec PREC3'''
-        # p[0] = NoneTerminal(p)
 
 ################################################## MACROSSSSSSSS #############################################################
     def p_macros_1(self, p):
@@ -88,13 +96,24 @@ class Parser:
 ################################################ VAR DEC & RETURN_TYPE ######################################################
     def p_var_dec(self, p):
         r'''var_dec :   var_type var_list SEMICOLON '''
+        global VARIABLES
         p[0] = NoneTerminal(p)
-        p[0].code = p[1].code + " " + p[2].code + ";"
+        variable_decs = [ p[1].rtype + " " + var + ";\n" for var in p[2].vars]
+        VARIABLES += p[2].vars
+        p[0].code = variable_decs + "\n" + p[2].code
+
+    def p_statement_var_dec(self, p):
+        r'''statement_var_dec :   return_type var_list SEMICOLON'''
+        global VARIABLES
+        p[0] = NoneTerminal(p)
+        variable_decs = "\n".join([ p[1].rtype + " " + var + ";" for var in p[2].vars])
+        VARIABLES += p[2].vars
+        p[0].code = variable_decs + "\n" + p[2].code
 
     def p_var_type_1(self, p):
         r'''var_type :   return_type'''
         p[0] = NoneTerminal(p)
-        p[0].code = p[1].code
+        p[0].rtype = p[1].rtype
 
     def p_var_type_2(self, p):
         r'''var_type :   STATIC return_type '''
@@ -104,74 +123,80 @@ class Parser:
     def p_return_type_1(self, p):
         r'''return_type :   INT_TYPE'''
         p[0] = NoneTerminal(p)
-        p[0].code = "int"
+        p[0].rtype = "int"
 
     def p_return_type_2(self, p):
         r'''return_type :   REAL_TYPE'''
         p[0] = NoneTerminal(p)
-        p[0].code = "double"
+        p[0].rtype = "double"
 
     def p_return_type_3(self, p):
         r'''return_type :   BOOL_TYPE'''
         p[0] = NoneTerminal(p)
-        p[0].code = "bool"
+        p[0].rtype = "bool"
 
     def p_return_type_4(self, p):
         r'''return_type :   STRING_TYPE'''
         p[0] = NoneTerminal(p)
-        p[0].code = "char*"
+        p[0].rtype = "char*"
 
     def p_return_type_5(self, p):
         r'''return_type :   ID'''
         p[0] = NoneTerminal(p)
-        p[0].code = "here?"
-################################################ VAR DEC & RETURN_TYPE #######################################################
+        p[0].rtype = "\n\nNON SUPPORTED VARIABLE TYPE!\n\n"
 
-##################################################### VAR LIST ############################################################
     def p_var_list_1(self, p):
         r'''var_list :  var_list COMMA var_list_item'''
         p[0] = NoneTerminal(p)
-        p[0].code = p[1].code + ", " + p[3].code
+        p[0].code = p[1].code + p[3].code
+        p[0].vars = p[1].vars + p[3].vars
+        print("38485984502834750283450298475-29384-5298-42598-34058-290485=2409582-")
+        print(p[0].vars)
+        print("38485984502834750283450298475-29384-5298-42598-34058-290485=2409582-")
 
     def p_var_list_2(self, p):
         r'''var_list :   var_list_item'''
         p[0] = NoneTerminal(p)
         p[0].code = p[1].code
+        p[0].vars = p[1].vars
 
     def p_var_list_item_1(self, p):
         r'''var_list_item :   ID'''
         p[0] = NoneTerminal(p)
-        p[0].code = p[1]
+        p[0].code = ""
+        p[0].vars = [p[1]]
 
     def p_var_list_item_2(self, p):
         r'''var_list_item : ID ASSIGNMENT exp'''
         p[0] = NoneTerminal(p)
         p[0].code = p[3].code +  p[1] + " = " + p[3].get_value()
-##################################################### VAR LIST ##############################################################
+        p[0].vars = [p[1]]
+################################################ VAR DEC & RETURN_TYPE #######################################################
 
 ##################################################### FUNCTIONS ############################################################
     def p_func_dec(self, p):
         r'''func_dec :   var_type func_body '''
         p[0] = NoneTerminal(p)
-        p[0].code = "FUNCTION NOT YET!"
+        p[0].code = p[2].code
 
     def p_func_dec_1(self, p):
         r'''func_dec :   VOID func_body'''
         p[0] = NoneTerminal(p)
-        p[0].code = "FUNCTION NOT YET!"
+        p[0].code = p[2].code
 
     def p_func_dec_2(self, p):
         r'''func_dec :   STATIC VOID func_body'''
         p[0] = NoneTerminal(p)
-        p[0].code = "// Functions not yet \nvoid " + p[3].code
+        p[0].code = p[3].code
 
     def p_func_body(self, p):
         r'''func_body :   ID LP formal_arguments RP block '''
         p[0] = NoneTerminal(p)
-        registers = ""
-        if len(Register.Registers) > 0:
-            registers = "double " + " ,".join((reg.place for reg in Register.Registers)) + ";\n"
-        p[0].code = "main()\n{\n\n"+ registers + "\n" +  p[5].code + "\n\n}"
+
+        return_phrase = "goto end;\n\n" if p[1] == "_main" else "" #pop_return_address() + return_code()
+
+        p[0].code = p[1] + ":; //function decleration\n\n" + p[3].code + "\n // function body:\n" + p[5].code \
+                    + "\n// function ended\n" + return_phrase
 ##################################################### FUNCTIONS ############################################################
 
 
@@ -179,22 +204,34 @@ class Parser:
     def p_formal_arguments_1(self, p):
         r'''formal_arguments :   formal_arguments_list'''
         p[0] = NoneTerminal(p)
+        p[0].code = "// fetching arguments\n\n" + p[1].code
+        p[0].t = p[1].t
+        print(p[0].code, "-------")
 
     def p_formal_arguments_2(self, p):
         r'''formal_arguments :   empty'''
         p[0] = NoneTerminal(p)
+        p[0].t = 0
+        p[0].code = ""
 
     def p_formal_arguments_list_1(self, p):
         r'''formal_arguments_list :   formal_arguments_list COMMA formal_argument'''
         p[0] = NoneTerminal(p)
+        p[0].code = p[1].code + p[3].code
+        p[0].t = p[1].t + p[3].t
+        
 
     def p_formal_arguments_list_2(self, p):
         r'''formal_arguments_list :   formal_argument'''
         p[0] = NoneTerminal(p)
+        p[0].code = p[1].code
+        p[0].t = 1
 
     def p_formal_argument(self, p):
         r'''formal_argument :   return_type ID '''
         p[0] = NoneTerminal(p)
+        p[0].code = pop_variable(p[2])
+        p[0].t = 1
 ##################################################### FORMAL ARGUMENTS #####################################################
 
 ##################################################### BLOCK & STATEMENTS ###################################################
@@ -262,7 +299,7 @@ class Parser:
     def p_statement_9(self, p):
         r'''statement :   return'''
         p[0] = NoneTerminal(p)
-        p[0].code = "#######RETURN##########"
+        p[0].code = p[1].code
 
     def p_statement_10(self, p):
         r'''statement :   break'''
@@ -297,17 +334,13 @@ class Parser:
         p[0] = NoneTerminal(p)
         p[0].code = "#####PRINT NOT YET"
 
-    def p_statement_var_dec(self, p):
-        r'''statement_var_dec :   return_type var_list SEMICOLON'''
-        p[0] = NoneTerminal(p)
-        p[0].code = p[1].code + " " + p[2].code + ";\n"
+
 
 ########################################################### IFS ###########################################################
     def p_if(self, p):
         r'''if :   IF LP exp RP block elseif_blocks else_block'''
 
-        p[3].code = p[3].ifexp if p[3].ifexp else ""
-
+        p[3].code = p[3].ifexp if p[3].ifexp else p[3].code
         p[0] = NoneTerminal(p)
 
         p[0].true = Label()
@@ -357,8 +390,8 @@ class Parser:
             false_block = elsifblock + elseblock
         
         next_block = p[0].next.label + ": //end of if statement - next\n"
-
-        p[0].code = "// if statement\n" +  p[3].code + true_block + false_block + next_block
+        
+        p[0].code = "// if statement\n//new\n" + p[3].code + true_block + false_block + next_block
 
 
     def p_elseif_blocks_1(self, p):
@@ -440,6 +473,7 @@ class Parser:
     def p_return(self, p):
         r'''return :   RETURN exp SEMICOLON'''
         p[0] = NoneTerminal(p)
+        p[0].code = "// push return value to stack\n" + p[2].code + push_variable(p[2].get_value()) + pop_return_address() + return_code()
 
     def p_break(self, p):
         r'''break :   BREAK SEMICOLON'''
@@ -492,11 +526,14 @@ class Parser:
         r'''exp :   logical_operation'''
         p[0] = NoneTerminal(p)
         p[0].code = p[1].code
+        p[0].place = p[1].get_value()
 
     def p_exp_9(self, p):
         r'''exp :   comparison_operation'''
         p[0] = NoneTerminal(p)
         p[0].code = p[1].code
+        print("@@@@@@@@@@@@")
+        print(id(p[0]))
 
     def p_exp_10(self, p):
         r'''exp :   bitwise_operation'''
@@ -506,7 +543,8 @@ class Parser:
     def p_exp_11(self, p):
         r'''exp :   unary_operation'''
         p[0] = NoneTerminal(p)
-        p[0].code = "NOT YET UNARY"
+        p[0].code = p[1].code
+        p[0].place = p[1].get_value()
 
     def p_exp_12(self, p):
         r'''exp :   LP exp RP'''
@@ -517,7 +555,8 @@ class Parser:
     def p_exp_13(self, p):
         r'''exp :   function_call'''
         p[0] = NoneTerminal(p)
-        p[0].code = "NOT YET FUNCTION CALL"
+        p[0].code = p[1].code
+        p[0].place = p[1].get_value()
 ##################################################### EXPRESSION ###########################################################
 
 ################################################### BINARY OPERATION #######################################################
@@ -569,7 +608,7 @@ class Parser:
 
         true_label = Label()
         back_patch_true(p[1], true_label)
-        p[0].code = p[1].code + true_label + ": // logical calculation (AND)\n" + p[2].code
+        p[0].code = p[1].code + true_label + ": // logical calculation (AND)\n" + p[3].code
 
 
     def p_logical_operation_10(self, p):
@@ -577,8 +616,8 @@ class Parser:
         p[0] = NoneTerminal(p)
 
         false_label = Label()
-        back_patch_false(p[0], false_label)
-        p[0].code = p[1].code + false_label + ": // logical calculation (OR)\n" + p[2].code
+        back_patch_false(p[1], false_label)
+        p[0].code = p[1].code + false_label.label + ": // logical calculation (OR)\n" + p[3].code
 
     def p_comparison_operation_1(self, p):
         r'''comparison_operation :   exp LT exp'''
@@ -604,6 +643,9 @@ class Parser:
         r'''comparison_operation :   exp EQ exp'''
         p[0] = NoneTerminal(p)
         comparison_operation_code(p)
+        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&7")
+        print(p[0].code)
+        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&7")
 
     def p_comparison_operation_6(self, p):
         r'''comparison_operation :   exp NE exp'''
@@ -625,49 +667,76 @@ class Parser:
 
 ################################################ UNARY OPERATION #######################################################
     def p_unary_operation_1(self, p):
-        r'''unary_operation :   SUBTRACTION exp '''
+        r'''unary_operation :   SUBTRACTION exp'''
         p[0] = NoneTerminal(p)
-        p[0].code = "UNARY NOT YET" 
+        unary_operation_code(p)
 
     def p_unary_operation_2(self, p):
         r'''unary_operation :   NOT exp'''
         p[0] = NoneTerminal(p)
-        p[0].code = "UNARY NOT YET" 
+        unary_operation_code(p)
 
     def p_unary_operation_3(self, p):
         r'''unary_operation :   BITWISE_NOT exp'''
         p[0] = NoneTerminal(p)
-        p[0].code = "UNARY NOT YET" 
+        unary_operation_code(p)
 ################################################ UNARY OPERATION #######################################################
 
 ################################################ FUNCTION CALL #######################################################
     def p_function_call_1(self, p):
         r'''function_call :   ID function_call_body'''
+        global VARIABLES
         p[0] = NoneTerminal(p)
+        return_label = Label()
+        registers = Register.Registers.copy()
+        variables = VARIABLES.copy()
+        p[0].code = store_all_registers(registers) + store_all_variables(variables) + "// store return label\n" + push_address(return_label.label)
+        p[0].code += "// calc and store function arguments\n"+ p[2].code + store_args(p[2].args)
+        p[0].code += "// call function\ngoto " + p[1] + ";\n\n"
+
+        p[0].code += "// return label:\n" + return_label.label + ":;\n"
+        p[0].reg = Register("double")
+        p[0].code += "// load return value\n" + pop_variable(p[0].reg.place)
+        p[0].code += "// load regs and vars\n" + load_all_variables(variables) + load_all_registers(registers)
+        p[0].place = p[0].reg.place
 
     def p_function_call_2(self, p):
         r'''function_call :   ID DOT ID function_call_body '''
         p[0] = NoneTerminal(p)
+        p[0].code = "\n\nDOTTED FUNCTION CALL!\n\n"
 
     def p_function_call_body(self, p):
         r'''function_call_body :   LP actual_arguments RP'''
         p[0] = NoneTerminal(p)
+        p[0].code = p[2].code
+        p[0].args = p[2].args
 
     def p_actual_arguments_1(self, p):
         r'''actual_arguments :   actual_arguments_list'''
         p[0] = NoneTerminal(p)
+        p[0].code = p[1].code
+        p[0].args = p[1].args
 
     def p_actual_arguments_2(self, p):
         r'''actual_arguments :   empty'''
         p[0] = NoneTerminal(p)
+        print("hereeee")
+        p[0].code = ""
+        p[0].args = []
 
     def p_actual_arguments_list_1(self, p):
         r'''actual_arguments_list :   actual_arguments_list COMMA exp'''
         p[0] = NoneTerminal(p)
+        p[0].code = p[1].code + p[3].code
+        p[0].args = p[1].args + [ p[3].get_value() ]
+        print("ther", p[0].args)
 
     def p_actual_arguments_list_2(self, p):
         r'''actual_arguments_list :   exp'''
         p[0] = NoneTerminal(p)
+        p[0].code = p[1].code
+        print("here")
+        p[0].args = [ p[1].get_value() ]
 ################################################ FUNCTION CALL #######################################################
 
     def p_error(self, p):
