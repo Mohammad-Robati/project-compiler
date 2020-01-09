@@ -1,1 +1,16 @@
-program ali
+class Program{
+
+	bool boolean()
+    {
+		
+		if(true)
+        {
+            return false;
+		}
+        elseif (Ideee)
+        {
+			return true;
+		}
+	}
+	
+}

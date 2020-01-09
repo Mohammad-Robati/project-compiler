@@ -1,4 +1,5 @@
 from ply import lex
+import re
 
 
 class Lexer():
@@ -57,35 +58,31 @@ class Lexer():
         'DOT',
         'SEMICOLON',
         'COMMA',
-        'ERROR'
     )
 
     reserved = {
-        # Conditional
-        'If': 'IF',
-        'Then': 'THEN',
-        'Else': 'ELSE',
-        # Loops
-        'For': 'FOR',
-        'While': 'WHILE',
-        # Types
-        'Int': 'INT',
-        'Bool': 'BOOL',
-        'Real': 'REAL',
-        # Other Keywords
-        'Program': 'PROGRAM',
-        'Print': 'PRINT',
-        'To': 'TO',
-        'True': 'TRUE',
-        'False': 'FALSE',
-        'Downto': 'DOWNTO',
-        'Do': 'DO',
-        'Return': 'RETURN',
-        'Case': 'CASE',
-        'Function': 'FUNCTION',
-        'Procedure': 'PROCEDURE',
-        'Begin': 'BEGIN',
-        'End': 'END',
+        "int": "INT_TYPE",
+        "real":"REAL_TYPE",
+        "string":"STRING_TYPE",
+        "break":"BREAK",
+        "continue":"CONTINUE",
+        "if":"IF",
+        "else":"ELSE",
+        "elseif":"ELSEIF",
+        "while":"WHILE",
+        "for":"FOR",
+        "to":"TO",
+        "in":"IN",
+        "steps":"STEPS",
+        "class":"CLASS",
+        "reference":"REFERENCE",
+        "static":"STATIC",
+        "bool":"BOOL_TYPE",
+        "void":"VOID",
+        "true":"TRUE",
+        "false": "FALSE",
+        "pritnt": "PRINT",
+        "return": "RETURN"
     }
 
     DIGIT = '([0-9])'
@@ -95,7 +92,43 @@ class Lexer():
     ALPHANUMERICAL_UNDERSCORE_PAIR = '(' + ALPHANUMERICAL + '[_]' + ')'
     ALPHANUMERICAL_PAIR = '(' + ALPHANUMERICAL + ALPHANUMERICAL + ')'
 
-    t_ignore = r'([ \t\n]+)|(["][^"]*["]([ \t\n]*[+][ \t\n]*["][^"]*["])*)'
+    t_ignore = '\n \t\r\f\v'
+
+    def t_COMMENT(self, token):
+        r'(\/\/[^\n]*)|([/][*]([^*]*|[*][^/])*[*][/])'
+        print("comment!")
+
+    def t_HIGHPRO(self, token):
+        r'__high'
+        return token
+
+    def t_LOWPRO(self, token):
+        r'__low'
+        return token
+
+    def t_ID(self, token):
+        r'''[a-zA-Z_][a-zA-Z_0-9]*'''
+        idr = r'''([a-zA-Z](([a-zA-Z][a-zA-Z]))*)|(([a-zA-Z](([a-zA-Z][a-zA-Z]))*)([_]([a-zA-Z0-9][_])*)[a-zA-Z0-9](([a-zA-Z][a-zA-Z]))*)|(([a-zA-Z](([a-zA-Z][a-zA-Z]))*[a-zA-Z0-9])?([_]([a-zA-Z0-9][_])*)(([a-zA-Z][a-zA-Z]))*)'''
+        if token.value in self.reserved:
+            token.type = self.reserved[token.value]
+        if re.match(idr, token.value):
+            return token
+        raise Exception('SyntaxError: invalid syntax at ', token.value[0])
+
+    def t_REAL(self, token):
+        r'([1-9][0-9]*|0)\.[0-9]*[1-9]'
+        token.value = float(token.value)
+        return token
+
+    def t_INTEGER(self, token):
+        r'0b1[10]*|0b0|[1-9][0-9]*|0[xX][1-9A-Fa-f][0-9A-Fa-f]*|0[xX]0|0'
+        token.value = int(token.value, 0)
+        return token
+
+    def t_STRING(self, token):
+        r'(["][^"]*["]([ \t\n]*[+][ \t\n]*["][^"]*["])*)'
+        token.value = token.value.replace('', '\"[ \n\t]*[+][ \n\t]*\"')
+        return token
 
     def t_error(self, token):
         return token
@@ -124,12 +157,13 @@ class Lexer():
         r'if'
         return token
 
-    def t_ELSE(self, token):
-        r'else'
-        return token
-
     def t_ELSEIF(self, token):
         r'elseif'
+        return token
+
+
+    def t_ELSE(self, token):
+        r'else'
         return token
 
     def t_WHILE(self, token):
@@ -137,7 +171,7 @@ class Lexer():
         return token
 
     def t_FOR(self, token):
-        r'fo	r'
+        r'for'
         return token
 
     def t_TO(self, token):
@@ -188,20 +222,20 @@ class Lexer():
         r'return'
         return token
 
-    def t_BITWISE_AND(self, token):
-        r'&'
-        return token
-
     def t_AND(self, token):
         r'&&'
         return token
 
-    def t_BITWISE_OR(self, token):
-        r'\|'
+    def t_BITWISE_AND(self, token):
+        r'&'
         return token
 
     def t_OR(self, token):
         r'\|\|'
+        return token
+
+    def t_BITWISE_OR(self, token):
+        r'\|'
         return token
 
     def t_NOT(self, token):
@@ -220,9 +254,7 @@ class Lexer():
         r'\<\<'
         return token
 
-    def t_ASSIGNMENT(self, token):
-        r'\='
-        return token
+    
 
     def t_ADDITION(self, token):
         r'\+'
@@ -248,24 +280,28 @@ class Lexer():
         r'\^'
         return token
 
-    def t_GT(self, token):
-        r'>'
-        return token
-
     def t_GE(self, token):
         r'>\='
         return token
 
-    def t_LT(self, token):
-        r'\<'
+    def t_GT(self, token):
+        r'>'
         return token
 
     def t_LE(self, token):
         r'\<\='
         return token
 
+    def t_LT(self, token):
+        r'\<'
+        return token
+
     def t_EQ(self, token):
         r'=='
+        return token
+
+    def t_ASSIGNMENT(self, token):
+        r'\='
         return token
 
     def t_NE(self, token):
@@ -273,7 +309,7 @@ class Lexer():
         return token
 
     def t_LCB(self, token):
-        r'\''
+        r'\{'
         return token
 
     def t_RCB(self, token):
@@ -300,25 +336,7 @@ class Lexer():
         r','
         return token
 
-    def t_ID(self, token):
-        r'''([a-zA-Z](([a-zA-Z][a-zA-Z]))*)|(([a-zA-Z](([a-zA-Z][a-zA-Z]))*)([_]([a-zA-Z0-9][_])*)[a-zA-Z0-9](([a-zA-Z][a-zA-Z]))*)|(([a-zA-Z](([a-zA-Z][a-zA-Z]))*[a-zA-Z0-9])?([_]([a-zA-Z0-9][_])*)(([a-zA-Z][a-zA-Z]))*)'''
-        return token
-
-    def t_INTEGER(self, token):
-        r'0b1[10]*|0b0|[1-9][0-9]*|0[xX][1-9A-Fa-f][0-9A-Fa-f]*|0[xX]0|0'
-        token.value = int(token.value, 0)
-        return token
-
-    def t_REAL(self, token):
-        r'[1-9][0-9]*\.[0-9]*[1-9]'
-        token.value = float(token.value)
-        return token
-
-    def t_STRING(self, token):
-        r'"[^"]*"([ \t\n]*[+][ \t\n]*"[^"]*")*'
-        token.value = token.value.replace('', '\"[ \n\t]*[+][ \n\t]*\"')
-        return token
-
+    
     def t_ERROR(self, token):
         r'[^ \t\n"-=^_<>+*/;,{}]+'
         print("ERROR:", token)

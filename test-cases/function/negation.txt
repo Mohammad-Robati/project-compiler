@@ -1,0 +1,15 @@
+class Program{
+	static void _main(){
+		int input, out;
+		
+		input = 12201;
+		out = neg(neg(input + 2));
+		
+		print("{input}");
+		print("{out}");
+	}
+	
+	static int neg(int input){
+		return -input;
+	}
+}

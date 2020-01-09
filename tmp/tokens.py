@@ -53,5 +53,7 @@ tokens = (
     'DOT',
     'SEMICOLON',
     'COMMA',
+    'LOWPRO',
+    'HIGHPRO',
     'ERROR'
 )

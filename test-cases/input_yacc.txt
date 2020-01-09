@@ -1,0 +1,33 @@
+class Program{
+	Program var, integerId = 4;
+
+	static void _main(){
+		var = -23 - 22;
+		print("N
+		San" + "Ity.");
+		for(integerId in 0 to 100 steps 10){
+			;
+		}
+	}
+	
+	// Comment.
+	bool boolean(){
+		real var_2 = 0.14;
+		
+		if(var < 8 && 32 - var > var_2){
+			var = var | (integerId - 2);
+			var = var & 0b10010010;
+		}else if(Ideee){
+			while(true){
+				var = 3;
+				break;
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	real _func(int i, int j){
+		return i % j * 3.52;
+	}
+}

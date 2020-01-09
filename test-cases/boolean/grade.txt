@@ -1,0 +1,15 @@
+class Program{
+	static void _main(){
+		real grade;
+		int _rating;
+		
+		grade = 12;
+		
+		if(grade > 16)
+			_rating = 4;
+		else
+			_rating = 1;
+			
+		//print("{_rating}");
+	}
+}

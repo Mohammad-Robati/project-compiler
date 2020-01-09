@@ -1,0 +1,19 @@
+class Program{
+	static void _main(){
+		int comb_;
+		int n, r;
+		
+		n = 5;
+		r = 2;
+		
+		comb_ = combination(n, r);
+		print("{comb_}");
+		print("{n}");
+	}
+	
+	static int combination(int n, int r){
+		if(r == 0 || r == n)
+			return 1;
+		return combination(n - 1, r - 1) + combination(n - 1, r);
+	}
+}
