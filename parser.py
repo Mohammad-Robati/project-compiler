@@ -123,7 +123,7 @@ class Parser:
     def p_return_type_1(self, p):
         r'''return_type :   INT_TYPE'''
         p[0] = NoneTerminal(p)
-        p[0].rtype = "int"
+        p[0].rtype = "double"
 
     def p_return_type_2(self, p):
         r'''return_type :   REAL_TYPE'''
@@ -150,9 +150,6 @@ class Parser:
         p[0] = NoneTerminal(p)
         p[0].code = p[1].code + p[3].code
         p[0].vars = p[1].vars + p[3].vars
-        print("38485984502834750283450298475-29384-5298-42598-34058-290485=2409582-")
-        print(p[0].vars)
-        print("38485984502834750283450298475-29384-5298-42598-34058-290485=2409582-")
 
     def p_var_list_2(self, p):
         r'''var_list :   var_list_item'''
@@ -206,7 +203,6 @@ class Parser:
         p[0] = NoneTerminal(p)
         p[0].code = "// fetching arguments\n\n" + p[1].code
         p[0].t = p[1].t
-        print(p[0].code, "-------")
 
     def p_formal_arguments_2(self, p):
         r'''formal_arguments :   empty'''
@@ -241,6 +237,7 @@ class Parser:
         
         p[0].code = p[2].code
 
+
     def p_block_2(self, p):
         r'''block :   statement'''
         p[0] = NoneTerminal(p)
@@ -274,7 +271,7 @@ class Parser:
     def p_statement_4(self, p):
         r'''statement :   print'''
         p[0] = NoneTerminal(p)
-        p[0].code = "#########PRINT########"
+        p[0].code = p[1].code
 
     def p_statement_5(self, p):
         r'''statement :   statement_var_dec'''
@@ -332,7 +329,7 @@ class Parser:
     def p_print(self, p):
         r'''print :   PRINT LP STRING RP SEMICOLON '''
         p[0] = NoneTerminal(p)
-        p[0].code = "#####PRINT NOT YET"
+        p[0].code = "printf(\"%lf\\n\", " + p[3][2:-2] + ");\n"
 
 
 
@@ -532,8 +529,6 @@ class Parser:
         r'''exp :   comparison_operation'''
         p[0] = NoneTerminal(p)
         p[0].code = p[1].code
-        print("@@@@@@@@@@@@")
-        print(id(p[0]))
 
     def p_exp_10(self, p):
         r'''exp :   bitwise_operation'''
@@ -643,9 +638,6 @@ class Parser:
         r'''comparison_operation :   exp EQ exp'''
         p[0] = NoneTerminal(p)
         comparison_operation_code(p)
-        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&7")
-        print(p[0].code)
-        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&7")
 
     def p_comparison_operation_6(self, p):
         r'''comparison_operation :   exp NE exp'''
@@ -720,7 +712,6 @@ class Parser:
     def p_actual_arguments_2(self, p):
         r'''actual_arguments :   empty'''
         p[0] = NoneTerminal(p)
-        print("hereeee")
         p[0].code = ""
         p[0].args = []
 
@@ -729,13 +720,11 @@ class Parser:
         p[0] = NoneTerminal(p)
         p[0].code = p[1].code + p[3].code
         p[0].args = p[1].args + [ p[3].get_value() ]
-        print("ther", p[0].args)
 
     def p_actual_arguments_list_2(self, p):
         r'''actual_arguments_list :   exp'''
         p[0] = NoneTerminal(p)
         p[0].code = p[1].code
-        print("here")
         p[0].args = [ p[1].get_value() ]
 ################################################ FUNCTION CALL #######################################################
 

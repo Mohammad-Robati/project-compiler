@@ -1,0 +1,14 @@
+class Program{
+	static void _main(){
+		int a, b, c;
+		real average;
+		
+		a = 4;
+		b = 3;
+		c = 1;
+		
+		average = (a + b + c) / 3;
+		
+		print("{average}");
+	}
+}

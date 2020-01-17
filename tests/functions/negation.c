@@ -18,8 +18,8 @@ _main:; //function decleration
 
 
  // function body:
-int input;
-int out;
+double input;
+double out;
 input = 12201;
 ///////////////STORE REGS///////////////////
 top = top - 1; // push { t0 }
@@ -135,6 +135,8 @@ top = top + 1;
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 out = t2;
+printf("%lf\n", input);
+printf("%lf\n", out);
 
 // function ended
 goto end;

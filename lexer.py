@@ -94,9 +94,12 @@ class Lexer():
 
     t_ignore = '\n \t\r\f\v'
 
+    def t_PRINT(self, token):
+        r'print'
+        return token
+        
     def t_COMMENT(self, token):
         r'(\/\/[^\n]*)|([/][*]([^*]*|[*][^/])*[*][/])'
-        print("comment!")
 
     def t_HIGHPRO(self, token):
         r'__high'
@@ -127,7 +130,7 @@ class Lexer():
 
     def t_STRING(self, token):
         r'(["][^"]*["]([ \t\n]*[+][ \t\n]*["][^"]*["])*)'
-        token.value = token.value.replace('', '\"[ \n\t]*[+][ \n\t]*\"')
+        token.value = token.value.replace('\"[ \n\t]*[+][ \n\t]*\"', '')
         return token
 
     def t_error(self, token):
@@ -214,9 +217,7 @@ class Lexer():
         r'false'
         return token
 
-    def t_PRINT(self, token):
-        r'print'
-        return token
+
 
     def t_RETURN(self, token):
         r'return'

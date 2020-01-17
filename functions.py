@@ -15,7 +15,6 @@ def unary_operation_code(p):
     reg = Register('double')
     p[0].place = reg.place
     p[0].code = p[2].code +  p[0].place + " = " + p[1] + p[2].get_value() + ";\n"
-    print("...**__", id(p[0]))
 
 def comparison_operation_code(p):
     p[0].code = p[1].code + p[3].code + "if(" + p[1].get_value() + p[2] + p[3].get_value() + ") goto " + TRUE_LABEL + ";\n" + "goto " + FALSE_LABEL + ";\n\n"

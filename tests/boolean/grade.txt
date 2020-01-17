@@ -1,0 +1,19 @@
+class Program{
+	static void _main(){
+		real grade;
+		int _rating;
+		
+		grade = 15;
+		
+		if(grade > 16)
+			_rating = 4;
+		elseif(grade > 14)
+			_rating = 3;
+		elseif(grade > 12)
+			_rating = 2;
+		else
+			_rating = 1;
+			
+		print("{_rating}");
+	}
+}

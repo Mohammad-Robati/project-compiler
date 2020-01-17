@@ -1,0 +1,23 @@
+class Program{
+	static void _main(){
+		int number_;
+		int ro_ot;
+		int sumOdds;
+		int odd;
+		
+		number_ = 100;
+		ro_ot = 0;
+		sumOdds = 0;
+		odd = 0;
+		
+		while(ro_ot * ro_ot <= number_){
+			if(odd)
+				sumOdds = sumOdds + ro_ot;
+			
+			odd = 1 - odd;
+			ro_ot = ro_ot + 1;
+		}
+		
+		print("{sumOdds}");
+	}
+}
