@@ -6,9 +6,9 @@ class NoneTerminal:
         self.rtype = [None]
         self.value = ""
         self.code = ""
+        self.vars = ""
+        self.funcs = ""
 
-        self.true = ""
-        self.false = ""
         self.begin = ""
         self.ifexp = None
         self.label = ""

@@ -5,7 +5,10 @@
 int main()
 {
 
-void* returnAddress;
+double b;
+double average;
+double a;
+double c;void* returnAddress;
 double * top = (double*) malloc(1000 * sizeof(double));
 void ** labelsTop = (void**) malloc(1000 * sizeof(void*));
 top += 1000;
@@ -18,10 +21,6 @@ _main:; //function decleration
 
 
  // function body:
-double a;
-double b;
-double c;
-double average;
 a = 4;
 b = 3;
 c = 1;

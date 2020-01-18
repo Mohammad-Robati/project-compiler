@@ -5,6 +5,7 @@ from nonterminal import NoneTerminal
 from functions import *
 from register import Register, Label
 
+ALL_VARIABLES = set()
 
 class Parser:
     tokens = Lexer().tokens
@@ -27,8 +28,10 @@ class Parser:
         
         stacks = "void* returnAddress;\ndouble * top = (double*) malloc(1000 * sizeof(double));\nvoid ** labelsTop = (void**) malloc(1000 * sizeof(void*));\ntop += 1000;\nlabelsTop += 1000;"
 
+        variables = "\n".join([ "double" + " " + var + ";" for var in ALL_VARIABLES])
+
         jump_to_main = "goto _main;\n\n"
-        p[0].code = head + "int main()\n{\n\n" + stacks + "\n" + registers + "\n" + jump_to_main +  p[2].code + "\n\nend : return 0;\n}"
+        p[0].code = head + "int main()\n{\n\n" + variables + stacks + "\n" + registers + "\n" + p[2].vars + jump_to_main +  p[2].funcs + "\n\nend : return 0;\n}"
 
         self.fileo.write(p[0].code)
 
@@ -58,39 +61,45 @@ class Parser:
         r'''classes :   classes class'''
         p[0] = NoneTerminal(p)
 
-        p[0].code = p[1].code + p[2].code
+        p[0].vars = p[1].vars + p[2].vars
+        p[0].funcs = p[1].funcs + p[2].funcs
 
     def p_classes_2(self, p):
         r'''classes :   empty'''
         p[0] = NoneTerminal(p)
-        p[0].code = ""
+        p[0].vars = ""
+        p[0].funcs = ""
 
     def p_class(self, p):
         r'''class :   CLASS ID LCB symbol_decs RCB '''
         p[0] = NoneTerminal(p)
-        p[0].code = p[4].code
+        p[0].vars = p[4].vars
+        p[0].funcs = p[4].funcs
 ################################################## END OF MACROS :D #############################################################
 
 ################################################## SYMBOL DECS ###############################################################
     def p_symbol_decs_1(self, p):
         r'''symbol_decs : symbol_decs symbol_dec'''
         p[0] = NoneTerminal(p)
-        p[0].code = p[1].code + p[2].code
+        p[0].vars = p[1].vars + p[2].vars
+        p[0].funcs = p[1].funcs + p[2].funcs
 
     def p_symbol_decs_2(self, p):
         r'''symbol_decs :   empty'''
         p[0] = NoneTerminal(p)
-        p[0].code = ""
+        p[0].vars = ""
+        p[0].funcs = ""
 
     def p_symbol_dec_1(self, p):
         r'''symbol_dec :   var_dec'''
         p[0] = NoneTerminal(p)
-        p[0].code = p[1].code
+        p[0].vars = p[1].code
+
 
     def p_symbol_dec_2(self, p):
         r'''symbol_dec :   func_dec'''
         p[0] = NoneTerminal(p)
-        p[0].code = p[1].code
+        p[0].funcs = p[1].code
 ################################################ END OF SYMBOL DECS :D #########################################################
 
 ################################################ VAR DEC & RETURN_TYPE ######################################################
@@ -98,17 +107,25 @@ class Parser:
         r'''var_dec :   var_type var_list SEMICOLON '''
         global VARIABLES
         p[0] = NoneTerminal(p)
-        variable_decs = [ p[1].rtype + " " + var + ";\n" for var in p[2].vars]
+        for var in p[2].vars:
+            ALL_VARIABLES.add(var)
+        #--
+        variable_decs = "\n".join([ p[1].rtype + " " + var + ";" for var in p[2].vars])
         VARIABLES += p[2].vars
-        p[0].code = variable_decs + "\n" + p[2].code
+        # p[0].code = variable_decs + "\n" + p[2].code 
+        p[0].code = p[2].code 
 
     def p_statement_var_dec(self, p):
         r'''statement_var_dec :   return_type var_list SEMICOLON'''
         global VARIABLES
         p[0] = NoneTerminal(p)
+        for var in p[2].vars:
+            ALL_VARIABLES.add(var)
+        #--
         variable_decs = "\n".join([ p[1].rtype + " " + var + ";" for var in p[2].vars])
         VARIABLES += p[2].vars
-        p[0].code = variable_decs + "\n" + p[2].code
+        # p[0].code = variable_decs + "\n" + p[2].code
+        p[0].code = p[2].code
 
     def p_var_type_1(self, p):
         r'''var_type :   return_type'''
@@ -166,7 +183,7 @@ class Parser:
     def p_var_list_item_2(self, p):
         r'''var_list_item : ID ASSIGNMENT exp'''
         p[0] = NoneTerminal(p)
-        p[0].code = p[3].code +  p[1] + " = " + p[3].get_value()
+        p[0].code = p[3].code +  p[1] + " = " + p[3].get_value() + ";\n"
         p[0].vars = [p[1]]
 ################################################ VAR DEC & RETURN_TYPE #######################################################
 
@@ -227,6 +244,9 @@ class Parser:
         r'''formal_argument :   return_type ID '''
         p[0] = NoneTerminal(p)
         p[0].code = pop_variable(p[2])
+        ALL_VARIABLES.add(p[2])
+        global VARIABLES
+        VARIABLES += [p[2]]
         p[0].t = 1
 ##################################################### FORMAL ARGUMENTS #####################################################
 
@@ -386,7 +406,7 @@ class Parser:
         if falselabel:
             false_block = elsifblock + elseblock
         
-        next_block = p[0].next.label + ": //end of if statement - next\n"
+        next_block = p[0].next.label + ":; //end of if statement - next\n"
         
         p[0].code = "// if statement\n//new\n" + p[3].code + true_block + false_block + next_block
 
@@ -444,7 +464,7 @@ class Parser:
 
         initialization = "int " + p[3] + ";\n" + p[3] + " = " + p[5].get_value() + "; // FOR initialization\n"
 
-        check_bundry = "if ( " + p[3] + " < " + p[7].get_value() + " ) goto " + code_begin.label + "; // FOR check\n"
+        check_bundry = "if ( " + p[3] + " <= " + p[7].get_value() + " ) goto " + code_begin.label + "; // FOR check\n"
         check_bundry += "goto " + after.label + ";\n\n"
 
         iteration = p[3] + " = " + p[3] + " + " + p[9].get_value() + "; // FOR iteration\n"
@@ -603,7 +623,7 @@ class Parser:
 
         true_label = Label()
         back_patch_true(p[1], true_label)
-        p[0].code = p[1].code + true_label + ": // logical calculation (AND)\n" + p[3].code
+        p[0].code = p[1].code + true_label.label + ": // logical calculation (AND)\n" + p[3].code
 
 
     def p_logical_operation_10(self, p):

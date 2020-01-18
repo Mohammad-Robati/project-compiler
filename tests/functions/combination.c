@@ -5,7 +5,9 @@
 int main()
 {
 
-void* returnAddress;
+double n;
+double comb_;
+double r;void* returnAddress;
 double * top = (double*) malloc(1000 * sizeof(double));
 void ** labelsTop = (void**) malloc(1000 * sizeof(void*));
 top += 1000;
@@ -18,9 +20,6 @@ _main:; //function decleration
 
 
  // function body:
-double comb_;
-double n;
-double r;
 n = 7;
 r = 2;
 ///////////////STORE REGS///////////////////
@@ -118,7 +117,7 @@ goto *returnAddress; // return from function
 
 goto L3; //next label
 
-L3: //end of if statement - next
+L3:; //end of if statement - next
 // push return value to stack
 ///////////////STORE REGS///////////////////
 top = top - 1; // push { t0 }
@@ -135,6 +134,12 @@ top = top - 1; // push { t2 }
 /////////////STORE VARIBLES///////////////
 top = top - 1; // push { comb_ }
 *top = comb_;
+
+top = top - 1; // push { n }
+*top = n;
+
+top = top - 1; // push { r }
+*top = r;
 
 top = top - 1; // push { n }
 *top = n;
@@ -174,6 +179,12 @@ top = top + 1;
 // load regs and vars
 
 //^^^^^^^^^^^LOAD VARIBLES^^^^^^^^^^^^^^^^
+r = *top; // pop { r }
+top = top + 1;
+
+n = *top; // pop { n }
+top = top + 1;
+
 r = *top; // pop { r }
 top = top + 1;
 
@@ -224,6 +235,12 @@ top = top - 1; // push { n }
 top = top - 1; // push { r }
 *top = r;
 
+top = top - 1; // push { n }
+*top = n;
+
+top = top - 1; // push { r }
+*top = r;
+
 ///////////////////////////////////////////
 
 // store return label
@@ -255,6 +272,12 @@ top = top + 1;
 // load regs and vars
 
 //^^^^^^^^^^^LOAD VARIBLES^^^^^^^^^^^^^^^^
+r = *top; // pop { r }
+top = top + 1;
+
+n = *top; // pop { n }
+top = top + 1;
+
 r = *top; // pop { r }
 top = top + 1;
 

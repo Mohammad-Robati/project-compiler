@@ -5,7 +5,14 @@
 int main()
 {
 
-void* returnAddress;
+double average;
+double a;
+double number_;
+double b;
+double odd;
+double c;
+double ro_ot;
+double sumOdds;void* returnAddress;
 double * top = (double*) malloc(1000 * sizeof(double));
 void ** labelsTop = (void**) malloc(1000 * sizeof(void*));
 top += 1000;
@@ -18,10 +25,6 @@ _main:; //function decleration
 
 
  // function body:
-double number_;
-double ro_ot;
-double sumOdds;
-double odd;
 number_ = 100;
 ro_ot = 0;
 sumOdds = 0;
@@ -42,7 +45,7 @@ L0: t9 = sumOdds + ro_ot;
 sumOdds = t9;
 goto L1; //next label
 
-L1: //end of if statement - next
+L1:; //end of if statement - next
 t10 = 1 - odd;
 odd = t10;
 t11 = ro_ot + 1;

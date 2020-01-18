@@ -5,7 +5,8 @@
 int main()
 {
 
-void* returnAddress;
+double out;
+double input;void* returnAddress;
 double * top = (double*) malloc(1000 * sizeof(double));
 void ** labelsTop = (void**) malloc(1000 * sizeof(void*));
 top += 1000;
@@ -18,8 +19,6 @@ _main:; //function decleration
 
 
  // function body:
-double input;
-double out;
 input = 12201;
 ///////////////STORE REGS///////////////////
 top = top - 1; // push { t0 }

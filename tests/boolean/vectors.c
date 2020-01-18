@@ -5,7 +5,20 @@
 int main()
 {
 
-void* returnAddress;
+double average;
+double grade;
+double length1;
+double length2;
+double a;
+double something;
+double number_;
+double b;
+double odd;
+double sum;
+double c;
+double _rating;
+double ro_ot;
+double sumOdds;void* returnAddress;
 double * top = (double*) malloc(1000 * sizeof(double));
 void ** labelsTop = (void**) malloc(1000 * sizeof(void*));
 top += 1000;
@@ -18,10 +31,6 @@ _main:; //function decleration
 
 
  // function body:
-double sum;
-double something;
-double length1;
-double length2;
 sum = 0;
 length1 = 0;
 // FOR BEGIN

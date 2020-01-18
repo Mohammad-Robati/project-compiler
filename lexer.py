@@ -109,6 +109,10 @@ class Lexer():
         r'__low'
         return token
 
+    def t_NE(self, token):
+        r'!='
+        return token
+
     def t_ID(self, token):
         r'''[a-zA-Z_][a-zA-Z_0-9]*'''
         idr = r'''([a-zA-Z](([a-zA-Z][a-zA-Z]))*)|(([a-zA-Z](([a-zA-Z][a-zA-Z]))*)([_]([a-zA-Z0-9][_])*)[a-zA-Z0-9](([a-zA-Z][a-zA-Z]))*)|(([a-zA-Z](([a-zA-Z][a-zA-Z]))*[a-zA-Z0-9])?([_]([a-zA-Z0-9][_])*)(([a-zA-Z][a-zA-Z]))*)'''
@@ -305,9 +309,6 @@ class Lexer():
         r'\='
         return token
 
-    def t_NE(self, token):
-        r'!='
-        return token
 
     def t_LCB(self, token):
         r'\{'

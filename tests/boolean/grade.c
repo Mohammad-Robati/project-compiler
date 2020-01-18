@@ -5,7 +5,16 @@
 int main()
 {
 
-void* returnAddress;
+double average;
+double grade;
+double a;
+double number_;
+double b;
+double odd;
+double c;
+double _rating;
+double ro_ot;
+double sumOdds;void* returnAddress;
 double * top = (double*) malloc(1000 * sizeof(double));
 void ** labelsTop = (void**) malloc(1000 * sizeof(void*));
 top += 1000;
@@ -18,8 +27,6 @@ _main:; //function decleration
 
 
  // function body:
-double grade;
-double _rating;
 grade = 15;
 // if statement
 //new
@@ -49,7 +56,7 @@ goto L9; // next label
 L10: //else
 _rating = 1;
 
-L9: //end of if statement - next
+L9:; //end of if statement - next
 printf("%lf\n", _rating);
 
 // function ended

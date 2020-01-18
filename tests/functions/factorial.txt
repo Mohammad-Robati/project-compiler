@@ -1,0 +1,18 @@
+class FunctionCall{
+	int num = 5;
+
+	int factorial(int n){
+		if(n < 2)
+			return 1;
+			
+		int value = factorial(n - 1);
+        real ret = n * value;
+
+		return ret;
+	}
+	
+	void _main(){
+		int results = factorial(num + 2);
+		print("{results}");
+	}
+}
